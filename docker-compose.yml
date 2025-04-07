@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  app:
+    image: vsa_img
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8089:8089"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/${DB_NAME}
+      - SPRING_DATASOURCE_USERNAME=${USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${PASSWORD}
+      - SPRING_JPA_HIBERNATE_DDL-AUTO=update
+      - SPRING_JPA_SHOW-SQL=true
+    depends_on:
+      - db
+    volumes:
+      - ./videos:/app/videos
+
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: ${USERNAME}
+      POSTGRES_PASSWORD: ${PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_con:/var/lib/postgresql/data
+
+volumes:
+  postgres_con:
